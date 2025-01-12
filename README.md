@@ -23,7 +23,7 @@ It intelligently distinguishes between binary and text files (supporting both UT
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/yourusername/vita.git
+   git clone https://github.com/rxxuzi/vita.git
    cd vita
    ```
 
