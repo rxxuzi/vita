@@ -49,6 +49,10 @@ struct Cli {
     #[arg(short = 'r', long = "raw")]
     raw: bool,
 
+    /// Grep: show only lines matching PATTERN with highlight
+    #[arg(short = 'g', long = "grep")]
+    grep: Option<String>,
+
     /// List available themes
     #[arg(long = "list-themes")]
     list_themes: bool,
@@ -77,6 +81,10 @@ fn main() {
         }
     };
     let out = Output::new(!cli.plain && io::stdout().is_terminal());
+
+    if let Some(ref pattern) = cli.grep {
+        return run_grep(&cli, pattern, &theme, &out);
+    }
 
     if cli.files.is_empty() {
         if io::stdin().is_terminal() {
@@ -137,6 +145,50 @@ fn main() {
                     eprintln!("vita: '{}': {}", path.display(), e);
                 }
             },
+        }
+    }
+}
+
+fn run_grep(cli: &Cli, pattern: &str, theme: &Theme, out: &Output) {
+    if cli.files.is_empty() {
+        if io::stdin().is_terminal() {
+            eprintln!("vita: no input. Use 'vita --help' for usage.");
+            process::exit(1);
+        }
+
+        let mut buf = String::new();
+        if io::stdin().read_to_string(&mut buf).is_err() {
+            eprintln!("vita: failed to read stdin");
+            process::exit(1);
+        }
+
+        render::grep::render(&buf, pattern, theme, out);
+        return;
+    }
+
+    let multi = cli.files.len() > 1;
+
+    for path in &cli.files {
+        if path.to_str() == Some("-") {
+            let mut buf = String::new();
+            if io::stdin().read_to_string(&mut buf).is_ok() {
+                render::grep::render(&buf, pattern, theme, out);
+            }
+            continue;
+        }
+
+        if !path.exists() {
+            eprintln!("vita: '{}': No such file or directory", path.display());
+            continue;
+        }
+
+        if multi {
+            out.file_separator(&path.display().to_string(), theme);
+        }
+
+        match std::fs::read_to_string(path) {
+            Ok(content) => render::grep::render(&content, pattern, theme, out),
+            Err(e) => eprintln!("vita: '{}': {}", path.display(), e),
         }
     }
 }

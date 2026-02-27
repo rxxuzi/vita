@@ -41,6 +41,9 @@ pub struct Theme {
     pub alert_important: Color,
     pub alert_warning: Color,
     pub alert_caution: Color,
+
+    pub grep_match_fg: Color,
+    pub grep_match_bg: Color,
 }
 
 impl Theme {
@@ -113,6 +116,8 @@ impl Theme {
             alert_important: Color::Rgb { r: 168, g: 143, b: 214 },
             alert_warning: Color::Rgb { r: 191, g: 135, b: 0   },
             alert_caution: Color::Rgb { r: 218, g: 54,  b: 51  },
+            grep_match_fg: Color::Rgb { r: 40,  g: 42,  b: 54  },
+            grep_match_bg: Color::Rgb { r: 241, g: 250, b: 140 },
         }
     }
 
@@ -154,6 +159,8 @@ impl Theme {
             alert_important: Color::Rgb { r: 255, g: 0,   b: 255 },
             alert_warning: Color::Rgb { r: 255, g: 255, b: 0   },
             alert_caution: Color::Rgb { r: 255, g: 0,   b: 0   },
+            grep_match_fg: Color::Rgb { r: 0,   g: 0,   b: 0   },
+            grep_match_bg: Color::Rgb { r: 255, g: 255, b: 0   },
         }
     }
 
@@ -195,6 +202,8 @@ impl Theme {
             alert_important: Color::Rgb { r: 203, g: 166, b: 247 },
             alert_warning: Color::Rgb { r: 249, g: 226, b: 175 },
             alert_caution: Color::Rgb { r: 243, g: 139, b: 168 },
+            grep_match_fg: Color::Rgb { r: 30,  g: 30,  b: 46  },
+            grep_match_bg: Color::Rgb { r: 249, g: 226, b: 175 },
         }
     }
 
@@ -236,6 +245,8 @@ impl Theme {
             alert_important: Color::Rgb { r: 180, g: 142, b: 173 },
             alert_warning: Color::Rgb { r: 235, g: 203, b: 139 },
             alert_caution: Color::Rgb { r: 191, g: 97,  b: 106 },
+            grep_match_fg: Color::Rgb { r: 46,  g: 52,  b: 64  },
+            grep_match_bg: Color::Rgb { r: 235, g: 203, b: 139 },
         }
     }
 
@@ -277,6 +288,8 @@ impl Theme {
             alert_important: Color::Rgb { r: 211, g: 134, b: 155 },
             alert_warning: Color::Rgb { r: 250, g: 189, b: 47  },
             alert_caution: Color::Rgb { r: 251, g: 73,  b: 52  },
+            grep_match_fg: Color::Rgb { r: 40,  g: 40,  b: 40  },
+            grep_match_bg: Color::Rgb { r: 250, g: 189, b: 47  },
         }
     }
 
@@ -318,6 +331,8 @@ impl Theme {
             alert_important: Color::Rgb { r: 174, g: 129, b: 255 },
             alert_warning: Color::Rgb { r: 230, g: 219, b: 116 },
             alert_caution: Color::Rgb { r: 249, g: 38,  b: 114 },
+            grep_match_fg: Color::Rgb { r: 35,  g: 35,  b: 30  },
+            grep_match_bg: Color::Rgb { r: 230, g: 219, b: 116 },
         }
     }
 
@@ -359,6 +374,8 @@ impl Theme {
             alert_important: Color::Rgb { r: 169, g: 113, b: 244 },
             alert_warning: Color::Rgb { r: 254, g: 172, b: 140 },
             alert_caution: Color::Rgb { r: 254, g: 146, b: 223 },
+            grep_match_fg: Color::Rgb { r: 34,  g: 34,  b: 34  },
+            grep_match_bg: Color::Rgb { r: 253, g: 254, b: 150 },
         }
     }
 
@@ -400,6 +417,8 @@ impl Theme {
             alert_important: Color::Rgb { r: 129, g: 197, b: 173 },
             alert_warning: Color::Rgb { r: 196, g: 255, b: 214 },
             alert_caution: Color::Rgb { r: 212, g: 254, b: 255 },
+            grep_match_fg: Color::Rgb { r: 20,  g: 26,  b: 40  },
+            grep_match_bg: Color::Rgb { r: 131, g: 241, b: 243 },
         }
     }
 }
