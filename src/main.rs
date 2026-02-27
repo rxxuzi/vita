@@ -29,7 +29,7 @@ struct Cli {
     #[arg(short = 'n', long = "number")]
     line_numbers: bool,
 
-    /// Color theme
+    /// Color theme (--list-themes to see all)
     #[arg(short = 't', long = "theme", default_value = "dracula")]
     theme: String,
 
@@ -67,7 +67,15 @@ fn main() {
         return;
     }
 
-    let theme = Theme::from_name(&cli.theme);
+    let theme = match Theme::from_name(&cli.theme) {
+        Some(t) => t,
+        None => {
+            eprintln!("vita: unknown theme '{}'", cli.theme);
+            eprintln!();
+            Theme::list_all_to(&mut io::stderr());
+            process::exit(1);
+        }
+    };
     let out = Output::new(!cli.plain && io::stdout().is_terminal());
 
     if cli.files.is_empty() {
@@ -126,7 +134,6 @@ fn main() {
             _ => match std::fs::read_to_string(path) {
                 Ok(content) => render_content(&content, &format, &cli, &theme, &out),
                 Err(e) => {
-                    // Might be binary
                     eprintln!("vita: '{}': {}", path.display(), e);
                 }
             },
@@ -140,7 +147,6 @@ fn render_content(content: &str, format: &FileFormat, cli: &Cli, theme: &Theme, 
         return;
     }
 
-    // Raw mode: syntax coloring only, skip format-specific rendering
     if cli.raw {
         let lang = match format {
             FileFormat::Markdown => "Markdown",
@@ -161,7 +167,7 @@ fn render_content(content: &str, format: &FileFormat, cli: &Cli, theme: &Theme, 
         FileFormat::Code(lang) => {
             render::code::render(content, lang, cli.line_numbers, theme, out)
         }
-        FileFormat::Image => {} // handled separately
+        FileFormat::Image => {}
         FileFormat::Plain => render::plain::render(content, cli.line_numbers, theme, out),
     }
 }

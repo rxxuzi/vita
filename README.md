@@ -40,21 +40,6 @@ git diff | vita          # Colored diff
 | **Images** | Terminal rendering using half-block characters (▀▄) |
 | **Plain Text** | Clean display with optional line numbers |
 
-## Themes
-
-Five built-in themes:
-
-- **dracula** (default)
-- **tokyonight**
-- **catppuccin**
-- **nord**
-- **gruvbox**
-
-```bash
-vita --list-themes
-vita -t catppuccin README.md
-```
-
 ## Language Support
 
 90+ languages with syntax highlighting. Native support for C, C++, Rust, Python, JavaScript, Go, Java, Ruby, PHP, Haskell, Scala, and more.
