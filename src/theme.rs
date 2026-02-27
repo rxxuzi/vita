@@ -1,0 +1,275 @@
+use crossterm::style::Color;
+
+#[derive(Debug, Clone)]
+pub struct Theme {
+    pub name: &'static str,
+
+    // Syntax highlighting theme name (for syntect)
+    pub syntect_theme: &'static str,
+
+    // UI colors
+    pub heading1: Color,
+    pub heading2: Color,
+    pub heading3: Color,
+    pub heading4: Color,
+    pub text: Color,
+    pub bold: Color,
+    pub italic: Color,
+    pub link: Color,
+    pub link_url: Color,
+    pub code_fg: Color,
+    pub code_bg: Color,
+    pub code_block_fg: Color,
+    pub code_block_bg: Color,
+    pub code_lang: Color,
+    pub quote: Color,
+    pub quote_bar: Color,
+    pub list_bullet: Color,
+    pub hr: Color,
+    pub table_border: Color,
+    pub table_header: Color,
+    pub strike: Color,
+    pub line_number: Color,
+    pub file_header: Color,
+
+    // JSON
+    pub json_key: Color,
+    pub json_string: Color,
+    pub json_number: Color,
+    pub json_bool: Color,
+    pub json_null: Color,
+    pub json_bracket: Color,
+
+    // GitHub Alerts
+    pub alert_note: Color,
+    pub alert_tip: Color,
+    pub alert_important: Color,
+    pub alert_warning: Color,
+    pub alert_caution: Color,
+}
+
+impl Theme {
+    pub fn from_name(name: &str) -> Self {
+        match name.to_lowercase().as_str() {
+            "tokyonight" | "tokyo-night" | "tokyo" => Self::tokyonight(),
+            "catppuccin" | "mocha" => Self::catppuccin(),
+            "nord" => Self::nord(),
+            "gruvbox" => Self::gruvbox(),
+            _ => Self::dracula(),
+        }
+    }
+
+    pub fn list_all() {
+        let themes = ["dracula", "tokyonight", "catppuccin", "nord", "gruvbox"];
+        println!("Available themes:");
+        for t in &themes {
+            let marker = if *t == "dracula" { " (default)" } else { "" };
+            println!("  {}{}", t, marker);
+        }
+    }
+
+    pub fn dracula() -> Self {
+        Self {
+            name: "dracula",
+            syntect_theme: "base16-eighties.dark",
+            heading1: Color::Rgb { r: 189, g: 147, b: 249 },
+            heading2: Color::Rgb { r: 255, g: 121, b: 198 },
+            heading3: Color::Rgb { r: 139, g: 233, b: 253 },
+            heading4: Color::Rgb { r: 80,  g: 250, b: 123 },
+            text: Color::Rgb { r: 248, g: 248, b: 242 },
+            bold: Color::Rgb { r: 255, g: 255, b: 255 },
+            italic: Color::Rgb { r: 200, g: 200, b: 200 },
+            link: Color::Rgb { r: 139, g: 233, b: 253 },
+            link_url: Color::Rgb { r: 98,  g: 114, b: 164 },
+            code_fg: Color::Rgb { r: 80,  g: 250, b: 123 },
+            code_bg: Color::Rgb { r: 68,  g: 71,  b: 90  },
+            code_block_fg: Color::Rgb { r: 248, g: 248, b: 242 },
+            code_block_bg: Color::Rgb { r: 40,  g: 42,  b: 54  },
+            code_lang: Color::Rgb { r: 98,  g: 114, b: 164 },
+            quote: Color::Rgb { r: 189, g: 147, b: 249 },
+            quote_bar: Color::Rgb { r: 98,  g: 114, b: 164 },
+            list_bullet: Color::Rgb { r: 255, g: 184, b: 108 },
+            hr: Color::Rgb { r: 98,  g: 114, b: 164 },
+            table_border: Color::Rgb { r: 98,  g: 114, b: 164 },
+            table_header: Color::Rgb { r: 189, g: 147, b: 249 },
+            strike: Color::Rgb { r: 108, g: 108, b: 108 },
+            line_number: Color::Rgb { r: 98,  g: 114, b: 164 },
+            file_header: Color::Rgb { r: 255, g: 121, b: 198 },
+            json_key: Color::Rgb { r: 139, g: 233, b: 253 },
+            json_string: Color::Rgb { r: 241, g: 250, b: 140 },
+            json_number: Color::Rgb { r: 189, g: 147, b: 249 },
+            json_bool: Color::Rgb { r: 255, g: 121, b: 198 },
+            json_null: Color::Rgb { r: 255, g: 121, b: 198 },
+            json_bracket: Color::Rgb { r: 248, g: 248, b: 242 },
+            alert_note: Color::Rgb { r: 88,  g: 166, b: 255 },
+            alert_tip: Color::Rgb { r: 63,  g: 185, b: 80  },
+            alert_important: Color::Rgb { r: 168, g: 143, b: 214 },
+            alert_warning: Color::Rgb { r: 191, g: 135, b: 0   },
+            alert_caution: Color::Rgb { r: 218, g: 54,  b: 51  },
+        }
+    }
+
+    pub fn tokyonight() -> Self {
+        Self {
+            name: "tokyonight",
+            syntect_theme: "base16-ocean.dark",
+            heading1: Color::Rgb { r: 122, g: 162, b: 247 },
+            heading2: Color::Rgb { r: 187, g: 154, b: 247 },
+            heading3: Color::Rgb { r: 125, g: 207, b: 255 },
+            heading4: Color::Rgb { r: 158, g: 206, b: 106 },
+            text: Color::Rgb { r: 192, g: 202, b: 245 },
+            bold: Color::Rgb { r: 255, g: 255, b: 255 },
+            italic: Color::Rgb { r: 169, g: 177, b: 214 },
+            link: Color::Rgb { r: 125, g: 207, b: 255 },
+            link_url: Color::Rgb { r: 86,  g: 95,  b: 137 },
+            code_fg: Color::Rgb { r: 158, g: 206, b: 106 },
+            code_bg: Color::Rgb { r: 41,  g: 46,  b: 66  },
+            code_block_fg: Color::Rgb { r: 192, g: 202, b: 245 },
+            code_block_bg: Color::Rgb { r: 30,  g: 32,  b: 48  },
+            code_lang: Color::Rgb { r: 86,  g: 95,  b: 137 },
+            quote: Color::Rgb { r: 122, g: 162, b: 247 },
+            quote_bar: Color::Rgb { r: 86,  g: 95,  b: 137 },
+            list_bullet: Color::Rgb { r: 224, g: 175, b: 104 },
+            hr: Color::Rgb { r: 59,  g: 66,  b: 97  },
+            table_border: Color::Rgb { r: 59,  g: 66,  b: 97  },
+            table_header: Color::Rgb { r: 122, g: 162, b: 247 },
+            strike: Color::Rgb { r: 86,  g: 95,  b: 137 },
+            line_number: Color::Rgb { r: 86,  g: 95,  b: 137 },
+            file_header: Color::Rgb { r: 187, g: 154, b: 247 },
+            json_key: Color::Rgb { r: 125, g: 207, b: 255 },
+            json_string: Color::Rgb { r: 158, g: 206, b: 106 },
+            json_number: Color::Rgb { r: 255, g: 158, b: 100 },
+            json_bool: Color::Rgb { r: 187, g: 154, b: 247 },
+            json_null: Color::Rgb { r: 187, g: 154, b: 247 },
+            json_bracket: Color::Rgb { r: 192, g: 202, b: 245 },
+            alert_note: Color::Rgb { r: 122, g: 162, b: 247 },
+            alert_tip: Color::Rgb { r: 158, g: 206, b: 106 },
+            alert_important: Color::Rgb { r: 187, g: 154, b: 247 },
+            alert_warning: Color::Rgb { r: 224, g: 175, b: 104 },
+            alert_caution: Color::Rgb { r: 247, g: 118, b: 142 },
+        }
+    }
+
+    pub fn catppuccin() -> Self {
+        Self {
+            name: "catppuccin",
+            syntect_theme: "base16-mocha.dark",
+            heading1: Color::Rgb { r: 203, g: 166, b: 247 },
+            heading2: Color::Rgb { r: 245, g: 194, b: 231 },
+            heading3: Color::Rgb { r: 137, g: 220, b: 235 },
+            heading4: Color::Rgb { r: 166, g: 227, b: 161 },
+            text: Color::Rgb { r: 205, g: 214, b: 244 },
+            bold: Color::Rgb { r: 255, g: 255, b: 255 },
+            italic: Color::Rgb { r: 186, g: 194, b: 222 },
+            link: Color::Rgb { r: 137, g: 220, b: 235 },
+            link_url: Color::Rgb { r: 108, g: 112, b: 134 },
+            code_fg: Color::Rgb { r: 166, g: 227, b: 161 },
+            code_bg: Color::Rgb { r: 49,  g: 50,  b: 68  },
+            code_block_fg: Color::Rgb { r: 205, g: 214, b: 244 },
+            code_block_bg: Color::Rgb { r: 30,  g: 30,  b: 46  },
+            code_lang: Color::Rgb { r: 108, g: 112, b: 134 },
+            quote: Color::Rgb { r: 203, g: 166, b: 247 },
+            quote_bar: Color::Rgb { r: 108, g: 112, b: 134 },
+            list_bullet: Color::Rgb { r: 250, g: 179, b: 135 },
+            hr: Color::Rgb { r: 69,  g: 71,  b: 90  },
+            table_border: Color::Rgb { r: 69,  g: 71,  b: 90  },
+            table_header: Color::Rgb { r: 203, g: 166, b: 247 },
+            strike: Color::Rgb { r: 108, g: 112, b: 134 },
+            line_number: Color::Rgb { r: 108, g: 112, b: 134 },
+            file_header: Color::Rgb { r: 245, g: 194, b: 231 },
+            json_key: Color::Rgb { r: 137, g: 220, b: 235 },
+            json_string: Color::Rgb { r: 166, g: 227, b: 161 },
+            json_number: Color::Rgb { r: 250, g: 179, b: 135 },
+            json_bool: Color::Rgb { r: 203, g: 166, b: 247 },
+            json_null: Color::Rgb { r: 203, g: 166, b: 247 },
+            json_bracket: Color::Rgb { r: 205, g: 214, b: 244 },
+            alert_note: Color::Rgb { r: 116, g: 199, b: 236 },
+            alert_tip: Color::Rgb { r: 166, g: 227, b: 161 },
+            alert_important: Color::Rgb { r: 203, g: 166, b: 247 },
+            alert_warning: Color::Rgb { r: 249, g: 226, b: 175 },
+            alert_caution: Color::Rgb { r: 243, g: 139, b: 168 },
+        }
+    }
+
+    pub fn nord() -> Self {
+        Self {
+            name: "nord",
+            syntect_theme: "base16-ocean.dark",
+            heading1: Color::Rgb { r: 129, g: 161, b: 193 },
+            heading2: Color::Rgb { r: 136, g: 192, b: 208 },
+            heading3: Color::Rgb { r: 143, g: 188, b: 187 },
+            heading4: Color::Rgb { r: 163, g: 190, b: 140 },
+            text: Color::Rgb { r: 216, g: 222, b: 233 },
+            bold: Color::Rgb { r: 236, g: 239, b: 244 },
+            italic: Color::Rgb { r: 216, g: 222, b: 233 },
+            link: Color::Rgb { r: 136, g: 192, b: 208 },
+            link_url: Color::Rgb { r: 76,  g: 86,  b: 106 },
+            code_fg: Color::Rgb { r: 163, g: 190, b: 140 },
+            code_bg: Color::Rgb { r: 59,  g: 66,  b: 82  },
+            code_block_fg: Color::Rgb { r: 216, g: 222, b: 233 },
+            code_block_bg: Color::Rgb { r: 46,  g: 52,  b: 64  },
+            code_lang: Color::Rgb { r: 76,  g: 86,  b: 106 },
+            quote: Color::Rgb { r: 129, g: 161, b: 193 },
+            quote_bar: Color::Rgb { r: 76,  g: 86,  b: 106 },
+            list_bullet: Color::Rgb { r: 208, g: 135, b: 112 },
+            hr: Color::Rgb { r: 76,  g: 86,  b: 106 },
+            table_border: Color::Rgb { r: 76,  g: 86,  b: 106 },
+            table_header: Color::Rgb { r: 129, g: 161, b: 193 },
+            strike: Color::Rgb { r: 76,  g: 86,  b: 106 },
+            line_number: Color::Rgb { r: 76,  g: 86,  b: 106 },
+            file_header: Color::Rgb { r: 136, g: 192, b: 208 },
+            json_key: Color::Rgb { r: 136, g: 192, b: 208 },
+            json_string: Color::Rgb { r: 163, g: 190, b: 140 },
+            json_number: Color::Rgb { r: 180, g: 142, b: 173 },
+            json_bool: Color::Rgb { r: 129, g: 161, b: 193 },
+            json_null: Color::Rgb { r: 129, g: 161, b: 193 },
+            json_bracket: Color::Rgb { r: 216, g: 222, b: 233 },
+            alert_note: Color::Rgb { r: 129, g: 161, b: 193 },
+            alert_tip: Color::Rgb { r: 163, g: 190, b: 140 },
+            alert_important: Color::Rgb { r: 180, g: 142, b: 173 },
+            alert_warning: Color::Rgb { r: 235, g: 203, b: 139 },
+            alert_caution: Color::Rgb { r: 191, g: 97,  b: 106 },
+        }
+    }
+
+    pub fn gruvbox() -> Self {
+        Self {
+            name: "gruvbox",
+            syntect_theme: "base16-eighties.dark",
+            heading1: Color::Rgb { r: 251, g: 73,  b: 52  },
+            heading2: Color::Rgb { r: 184, g: 187, b: 38  },
+            heading3: Color::Rgb { r: 131, g: 165, b: 152 },
+            heading4: Color::Rgb { r: 250, g: 189, b: 47  },
+            text: Color::Rgb { r: 235, g: 219, b: 178 },
+            bold: Color::Rgb { r: 253, g: 244, b: 193 },
+            italic: Color::Rgb { r: 213, g: 196, b: 161 },
+            link: Color::Rgb { r: 131, g: 165, b: 152 },
+            link_url: Color::Rgb { r: 124, g: 111, b: 100 },
+            code_fg: Color::Rgb { r: 184, g: 187, b: 38  },
+            code_bg: Color::Rgb { r: 60,  g: 56,  b: 54  },
+            code_block_fg: Color::Rgb { r: 235, g: 219, b: 178 },
+            code_block_bg: Color::Rgb { r: 40,  g: 40,  b: 40  },
+            code_lang: Color::Rgb { r: 124, g: 111, b: 100 },
+            quote: Color::Rgb { r: 131, g: 165, b: 152 },
+            quote_bar: Color::Rgb { r: 124, g: 111, b: 100 },
+            list_bullet: Color::Rgb { r: 254, g: 128, b: 25  },
+            hr: Color::Rgb { r: 80,  g: 73,  b: 69  },
+            table_border: Color::Rgb { r: 80,  g: 73,  b: 69  },
+            table_header: Color::Rgb { r: 250, g: 189, b: 47  },
+            strike: Color::Rgb { r: 124, g: 111, b: 100 },
+            line_number: Color::Rgb { r: 124, g: 111, b: 100 },
+            file_header: Color::Rgb { r: 251, g: 73,  b: 52  },
+            json_key: Color::Rgb { r: 131, g: 165, b: 152 },
+            json_string: Color::Rgb { r: 184, g: 187, b: 38  },
+            json_number: Color::Rgb { r: 211, g: 134, b: 155 },
+            json_bool: Color::Rgb { r: 254, g: 128, b: 25  },
+            json_null: Color::Rgb { r: 254, g: 128, b: 25  },
+            json_bracket: Color::Rgb { r: 235, g: 219, b: 178 },
+            alert_note: Color::Rgb { r: 131, g: 165, b: 152 },
+            alert_tip: Color::Rgb { r: 184, g: 187, b: 38  },
+            alert_important: Color::Rgb { r: 211, g: 134, b: 155 },
+            alert_warning: Color::Rgb { r: 250, g: 189, b: 47  },
+            alert_caution: Color::Rgb { r: 251, g: 73,  b: 52  },
+        }
+    }
+}

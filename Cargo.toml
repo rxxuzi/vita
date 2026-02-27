@@ -1,0 +1,26 @@
+[package]
+name = "vita"
+version = "0.1.0"
+edition = "2021"
+description = "Universal file viewer - cat with eyes"
+license = "GPL-3.0-only"
+authors = ["rxxuzi"]
+repository = "https://github.com/rxxuzi/vita"
+homepage = "https://github.com/rxxuzi/vita"
+keywords = ["cli", "terminal", "viewer", "markdown", "syntax-highlighting"]
+categories = ["command-line-utilities"]
+
+[dependencies]
+clap = { version = "4.4", features = ["derive"] }
+syntect = "5.1"
+pulldown-cmark = "0.10"
+serde_json = "1.0"
+image = "0.24"
+crossterm = "0.27"
+terminal_size = "0.3"
+unicode-width = "0.1"
+
+[profile.release]
+opt-level = 3
+lto = true
+strip = true
