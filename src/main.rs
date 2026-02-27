@@ -53,6 +53,14 @@ struct Cli {
     #[arg(short = 'g', long = "grep")]
     grep: Option<String>,
 
+    /// Show only the first N lines
+    #[arg(long = "head")]
+    head: Option<usize>,
+
+    /// Show only the last N lines
+    #[arg(long = "tail")]
+    tail: Option<usize>,
+
     /// List available themes
     #[arg(long = "list-themes")]
     list_themes: bool,
@@ -69,6 +77,11 @@ fn main() {
     if cli.list_themes {
         Theme::list_all();
         return;
+    }
+
+    if cli.head.is_some() && cli.tail.is_some() {
+        eprintln!("vita: --head and --tail cannot be used together");
+        process::exit(1);
     }
 
     let theme = match Theme::from_name(&cli.theme) {
@@ -98,6 +111,8 @@ fn main() {
             process::exit(1);
         }
 
+        let buf = truncate_lines(&buf, cli.head, cli.tail);
+
         let format = cli
             .lang
             .as_deref()
@@ -114,6 +129,7 @@ fn main() {
         if path.to_str() == Some("-") {
             let mut buf = String::new();
             if io::stdin().read_to_string(&mut buf).is_ok() {
+                let buf = truncate_lines(&buf, cli.head, cli.tail);
                 let format = detect::detect_from_content(&buf);
                 render_content(&buf, &format, &cli, &theme, &out);
             }
@@ -140,7 +156,10 @@ fn main() {
                 render::image::render(path, cli.width, &theme, &out);
             }
             _ => match std::fs::read_to_string(path) {
-                Ok(content) => render_content(&content, &format, &cli, &theme, &out),
+                Ok(content) => {
+                    let content = truncate_lines(&content, cli.head, cli.tail);
+                    render_content(&content, &format, &cli, &theme, &out);
+                }
                 Err(e) => {
                     eprintln!("vita: '{}': {}", path.display(), e);
                 }
@@ -162,6 +181,7 @@ fn run_grep(cli: &Cli, pattern: &str, theme: &Theme, out: &Output) {
             process::exit(1);
         }
 
+        let buf = truncate_lines(&buf, cli.head, cli.tail);
         render::grep::render(&buf, pattern, theme, out);
         return;
     }
@@ -172,6 +192,7 @@ fn run_grep(cli: &Cli, pattern: &str, theme: &Theme, out: &Output) {
         if path.to_str() == Some("-") {
             let mut buf = String::new();
             if io::stdin().read_to_string(&mut buf).is_ok() {
+                let buf = truncate_lines(&buf, cli.head, cli.tail);
                 render::grep::render(&buf, pattern, theme, out);
             }
             continue;
@@ -187,9 +208,24 @@ fn run_grep(cli: &Cli, pattern: &str, theme: &Theme, out: &Output) {
         }
 
         match std::fs::read_to_string(path) {
-            Ok(content) => render::grep::render(&content, pattern, theme, out),
+            Ok(content) => {
+                let content = truncate_lines(&content, cli.head, cli.tail);
+                render::grep::render(&content, pattern, theme, out);
+            }
             Err(e) => eprintln!("vita: '{}': {}", path.display(), e),
         }
+    }
+}
+
+fn truncate_lines(content: &str, head: Option<usize>, tail: Option<usize>) -> String {
+    if let Some(n) = head {
+        content.lines().take(n).collect::<Vec<_>>().join("\n")
+    } else if let Some(n) = tail {
+        let lines: Vec<&str> = content.lines().collect();
+        let skip = lines.len().saturating_sub(n);
+        lines[skip..].join("\n")
+    } else {
+        content.to_string()
     }
 }
 
