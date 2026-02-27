@@ -4,6 +4,7 @@ use std::path::PathBuf;
 use std::process;
 
 mod detect;
+mod info;
 mod output;
 mod render;
 mod theme;
@@ -48,6 +49,10 @@ struct Cli {
     /// Raw mode: syntax coloring without format rendering
     #[arg(short = 'r', long = "raw")]
     raw: bool,
+
+    /// Show file info header
+    #[arg(short = 'i', long = "info")]
+    info: bool,
 
     /// Grep: show only lines matching PATTERN with highlight
     #[arg(short = 'g', long = "grep")]
@@ -119,6 +124,9 @@ fn main() {
             .map(|l| FileFormat::Code(l.to_string()))
             .unwrap_or_else(|| detect::detect_from_content(&buf));
 
+        if cli.info {
+            info::print_header(None, Some(&format), Some(&buf), &theme, &out);
+        }
         render_content(&buf, &format, &cli, &theme, &out);
         return;
     }
@@ -131,6 +139,9 @@ fn main() {
             if io::stdin().read_to_string(&mut buf).is_ok() {
                 let buf = truncate_lines(&buf, cli.head, cli.tail);
                 let format = detect::detect_from_content(&buf);
+                if cli.info {
+                    info::print_header(None, Some(&format), Some(&buf), &theme, &out);
+                }
                 render_content(&buf, &format, &cli, &theme, &out);
             }
             continue;
@@ -153,11 +164,17 @@ fn main() {
 
         match &format {
             FileFormat::Image => {
+                if cli.info {
+                    info::print_header(Some(path), Some(&format), None, &theme, &out);
+                }
                 render::image::render(path, cli.width, &theme, &out);
             }
             _ => match std::fs::read_to_string(path) {
                 Ok(content) => {
                     let content = truncate_lines(&content, cli.head, cli.tail);
+                    if cli.info {
+                        info::print_header(Some(path), Some(&format), Some(&content), &theme, &out);
+                    }
                     render_content(&content, &format, &cli, &theme, &out);
                 }
                 Err(e) => {
@@ -182,6 +199,9 @@ fn run_grep(cli: &Cli, pattern: &str, theme: &Theme, out: &Output) {
         }
 
         let buf = truncate_lines(&buf, cli.head, cli.tail);
+        if cli.info {
+            info::print_header(None, None, Some(&buf), theme, out);
+        }
         render::grep::render(&buf, pattern, theme, out);
         return;
     }
@@ -193,6 +213,9 @@ fn run_grep(cli: &Cli, pattern: &str, theme: &Theme, out: &Output) {
             let mut buf = String::new();
             if io::stdin().read_to_string(&mut buf).is_ok() {
                 let buf = truncate_lines(&buf, cli.head, cli.tail);
+                if cli.info {
+                    info::print_header(None, None, Some(&buf), theme, out);
+                }
                 render::grep::render(&buf, pattern, theme, out);
             }
             continue;
@@ -210,6 +233,10 @@ fn run_grep(cli: &Cli, pattern: &str, theme: &Theme, out: &Output) {
         match std::fs::read_to_string(path) {
             Ok(content) => {
                 let content = truncate_lines(&content, cli.head, cli.tail);
+                if cli.info {
+                    let format = detect_format(path);
+                    info::print_header(Some(path), Some(&format), Some(&content), theme, out);
+                }
                 render::grep::render(&content, pattern, theme, out);
             }
             Err(e) => eprintln!("vita: '{}': {}", path.display(), e),
