@@ -1,3 +1,4 @@
+pub mod blame;
 pub mod brief;
 pub mod code;
 pub mod csv;

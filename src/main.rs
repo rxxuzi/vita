@@ -30,6 +30,10 @@ struct Cli {
     #[arg(short = 'b', long = "brief")]
     brief: bool,
 
+    /// Git blame: show who changed each line
+    #[arg(short = 'B', long = "blame")]
+    blame: bool,
+
     /// Grep: show only lines matching PAT with highlight
     #[arg(short = 'g', long = "grep", value_name = "PAT")]
     grep: Option<String>,
@@ -107,6 +111,10 @@ fn main() {
         process::exit(1);
     }
 
+    if cli.blame && (cli.brief || cli.show_all || cli.grep.is_some()) {
+        eprintln!("vita: --blame cannot be combined with --brief, --show-all, or --grep");
+        process::exit(1);
+    }
 
     let theme = match Theme::from_name(&cli.theme) {
         Some(t) => t,
@@ -121,6 +129,10 @@ fn main() {
 
     if cli.show_all {
         return run_show_all(&cli, &theme, &out);
+    }
+
+    if cli.blame {
+        return run_blame(&cli, &theme, &out);
     }
 
     if cli.brief {
@@ -281,6 +293,50 @@ fn run_show_all(cli: &Cli, theme: &Theme, out: &Output) {
             }
             Err(e) => eprintln!("vita: '{}': {}", path.display(), e),
         }
+    }
+}
+
+fn run_blame(cli: &Cli, theme: &Theme, out: &Output) {
+    if cli.files.is_empty() {
+        eprintln!("vita: --blame requires a file argument");
+        process::exit(1);
+    }
+
+    let multi = cli.files.len() > 1;
+
+    for path in &cli.files {
+        if path.to_str() == Some("-") {
+            eprintln!("vita: --blame cannot read from stdin");
+            continue;
+        }
+
+        if !path.exists() {
+            eprintln!("vita: '{}': No such file or directory", path.display());
+            continue;
+        }
+
+        if multi {
+            out.file_separator(&path.display().to_string(), theme);
+        }
+
+        let format = cli
+            .lang
+            .as_deref()
+            .map(|l| FileFormat::Code(l.to_string()))
+            .unwrap_or_else(|| detect_format(path));
+
+        let lang = match &format {
+            FileFormat::Code(l) => l.as_str(),
+            FileFormat::Markdown => "Markdown",
+            FileFormat::Json => "JSON",
+            _ => "Plain Text",
+        };
+
+        if cli.info {
+            info::print_header(Some(path), Some(&format), None, theme, out);
+        }
+
+        render::blame::render(path, lang, cli.head, cli.tail, theme, out);
     }
 }
 

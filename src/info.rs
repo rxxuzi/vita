@@ -107,7 +107,7 @@ fn format_size(bytes: u64) -> String {
     }
 }
 
-fn format_relative_time(modified: SystemTime) -> String {
+pub fn format_relative_time(modified: SystemTime) -> String {
     let elapsed = match modified.elapsed() {
         Ok(d) => d,
         Err(_) => return "just now".to_string(),
@@ -119,10 +119,12 @@ fn format_relative_time(modified: SystemTime) -> String {
         format!("{}m ago", secs / 60)
     } else if secs < 86400 {
         format!("{}h ago", secs / 3600)
-    } else if secs < 604800 {
+    } else if secs < 2_592_000 {
         format!("{}d ago", secs / 86400)
+    } else if secs < 31_536_000 {
+        format!("{}mo ago", secs / 2_592_000)
     } else {
-        format!("{}w ago", secs / 604800)
+        format!("{}y ago", secs / 31_536_000)
     }
 }
 
@@ -170,7 +172,13 @@ mod tests {
         let ago_3d = now - Duration::from_secs(259200);
         assert_eq!(format_relative_time(ago_3d), "3d ago");
 
-        let ago_2w = now - Duration::from_secs(1_209_600);
-        assert_eq!(format_relative_time(ago_2w), "2w ago");
+        let ago_14d = now - Duration::from_secs(1_209_600);
+        assert_eq!(format_relative_time(ago_14d), "14d ago");
+
+        let ago_3mo = now - Duration::from_secs(7_776_000);
+        assert_eq!(format_relative_time(ago_3mo), "3mo ago");
+
+        let ago_2y = now - Duration::from_secs(63_072_000);
+        assert_eq!(format_relative_time(ago_2y), "2y ago");
     }
 }

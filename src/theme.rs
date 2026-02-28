@@ -44,6 +44,10 @@ pub struct Theme {
 
     pub grep_match_fg: Color,
     pub grep_match_bg: Color,
+
+    pub blame_hash: Color,
+    pub blame_author: Color,
+    pub blame_date: Color,
 }
 
 impl Theme {
@@ -118,6 +122,9 @@ impl Theme {
             alert_caution: Color::Rgb { r: 218, g: 54,  b: 51  },
             grep_match_fg: Color::Rgb { r: 40,  g: 42,  b: 54  },
             grep_match_bg: Color::Rgb { r: 241, g: 250, b: 140 },
+            blame_hash: Color::Rgb { r: 98,  g: 114, b: 164 },
+            blame_author: Color::Rgb { r: 189, g: 147, b: 249 },
+            blame_date: Color::Rgb { r: 98,  g: 114, b: 164 },
         }
     }
 
@@ -161,6 +168,9 @@ impl Theme {
             alert_caution: Color::Rgb { r: 255, g: 0,   b: 0   },
             grep_match_fg: Color::Rgb { r: 0,   g: 0,   b: 0   },
             grep_match_bg: Color::Rgb { r: 255, g: 255, b: 0   },
+            blame_hash: Color::Rgb { r: 150, g: 150, b: 150 },
+            blame_author: Color::Rgb { r: 0,   g: 255, b: 255 },
+            blame_date: Color::Rgb { r: 150, g: 150, b: 150 },
         }
     }
 
@@ -204,6 +214,9 @@ impl Theme {
             alert_caution: Color::Rgb { r: 243, g: 139, b: 168 },
             grep_match_fg: Color::Rgb { r: 30,  g: 30,  b: 46  },
             grep_match_bg: Color::Rgb { r: 249, g: 226, b: 175 },
+            blame_hash: Color::Rgb { r: 108, g: 112, b: 134 },
+            blame_author: Color::Rgb { r: 203, g: 166, b: 247 },
+            blame_date: Color::Rgb { r: 108, g: 112, b: 134 },
         }
     }
 
@@ -247,6 +260,9 @@ impl Theme {
             alert_caution: Color::Rgb { r: 191, g: 97,  b: 106 },
             grep_match_fg: Color::Rgb { r: 46,  g: 52,  b: 64  },
             grep_match_bg: Color::Rgb { r: 235, g: 203, b: 139 },
+            blame_hash: Color::Rgb { r: 76,  g: 86,  b: 106 },
+            blame_author: Color::Rgb { r: 129, g: 161, b: 193 },
+            blame_date: Color::Rgb { r: 76,  g: 86,  b: 106 },
         }
     }
 
@@ -290,6 +306,9 @@ impl Theme {
             alert_caution: Color::Rgb { r: 251, g: 73,  b: 52  },
             grep_match_fg: Color::Rgb { r: 40,  g: 40,  b: 40  },
             grep_match_bg: Color::Rgb { r: 250, g: 189, b: 47  },
+            blame_hash: Color::Rgb { r: 124, g: 111, b: 100 },
+            blame_author: Color::Rgb { r: 250, g: 189, b: 47  },
+            blame_date: Color::Rgb { r: 124, g: 111, b: 100 },
         }
     }
 
@@ -333,6 +352,9 @@ impl Theme {
             alert_caution: Color::Rgb { r: 249, g: 38,  b: 114 },
             grep_match_fg: Color::Rgb { r: 35,  g: 35,  b: 30  },
             grep_match_bg: Color::Rgb { r: 230, g: 219, b: 116 },
+            blame_hash: Color::Rgb { r: 117, g: 113, b: 94  },
+            blame_author: Color::Rgb { r: 102, g: 217, b: 239 },
+            blame_date: Color::Rgb { r: 117, g: 113, b: 94  },
         }
     }
 
@@ -376,6 +398,9 @@ impl Theme {
             alert_caution: Color::Rgb { r: 254, g: 146, b: 223 },
             grep_match_fg: Color::Rgb { r: 34,  g: 34,  b: 34  },
             grep_match_bg: Color::Rgb { r: 253, g: 254, b: 150 },
+            blame_hash: Color::Rgb { r: 120, g: 90,  b: 120 },
+            blame_author: Color::Rgb { r: 254, g: 146, b: 223 },
+            blame_date: Color::Rgb { r: 120, g: 90,  b: 120 },
         }
     }
 
@@ -419,6 +444,9 @@ impl Theme {
             alert_caution: Color::Rgb { r: 212, g: 254, b: 255 },
             grep_match_fg: Color::Rgb { r: 20,  g: 26,  b: 40  },
             grep_match_bg: Color::Rgb { r: 131, g: 241, b: 243 },
+            blame_hash: Color::Rgb { r: 60,  g: 75,  b: 95  },
+            blame_author: Color::Rgb { r: 131, g: 241, b: 243 },
+            blame_date: Color::Rgb { r: 60,  g: 75,  b: 95  },
         }
     }
 }
