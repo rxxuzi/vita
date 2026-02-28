@@ -44,6 +44,7 @@ pub fn syntax_fallback(lang: &str) -> &str {
         "Kotlin" | "kt" => "Java",
         "Swift" | "swift" => "Objective-C",
         "Dart" | "dart" => "Java",
+        "ASM" | "asm" | "nasm" | "NASM" => "Plain Text",
         "Zig" | "zig" => "C",
         "Elixir" | "ex" => "Ruby",
         "Terraform" | "tf" => "YAML",
@@ -147,6 +148,8 @@ pub fn detect_format(path: &Path) -> FileFormat {
         "proto" => FileFormat::Code("Protocol Buffers".into()),
         "graphql" | "gql" => FileFormat::Code("GraphQL".into()),
         "vim" => FileFormat::Code("VimL".into()),
+
+        "asm" | "s" | "nasm" => FileFormat::Code("ASM".into()),
 
         "txt" | "text" | "log" => FileFormat::Plain,
 

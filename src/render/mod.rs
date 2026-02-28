@@ -1,3 +1,4 @@
+pub mod brief;
 pub mod code;
 pub mod csv;
 pub mod grep;

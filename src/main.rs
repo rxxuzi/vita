@@ -54,6 +54,10 @@ struct Cli {
     #[arg(short = 'i', long = "info")]
     info: bool,
 
+    /// Brief: show structural outline
+    #[arg(short = 'b', long = "brief")]
+    brief: bool,
+
     /// Grep: show only lines matching PATTERN with highlight
     #[arg(short = 'g', long = "grep")]
     grep: Option<String>,
@@ -89,6 +93,11 @@ fn main() {
         process::exit(1);
     }
 
+    if cli.brief && cli.grep.is_some() {
+        eprintln!("vita: --brief and --grep cannot be used together");
+        process::exit(1);
+    }
+
     let theme = match Theme::from_name(&cli.theme) {
         Some(t) => t,
         None => {
@@ -99,6 +108,10 @@ fn main() {
         }
     };
     let out = Output::new(!cli.plain && io::stdout().is_terminal());
+
+    if cli.brief {
+        return run_brief(&cli, &theme, &out);
+    }
 
     if let Some(ref pattern) = cli.grep {
         return run_grep(&cli, pattern, &theme, &out);
@@ -181,6 +194,81 @@ fn main() {
                     eprintln!("vita: '{}': {}", path.display(), e);
                 }
             },
+        }
+    }
+}
+
+fn run_brief(cli: &Cli, theme: &Theme, out: &Output) {
+    if cli.files.is_empty() {
+        if io::stdin().is_terminal() {
+            eprintln!("vita: no input. Use 'vita --help' for usage.");
+            process::exit(1);
+        }
+
+        let mut buf = String::new();
+        if io::stdin().read_to_string(&mut buf).is_err() {
+            eprintln!("vita: failed to read stdin");
+            process::exit(1);
+        }
+
+        let buf = truncate_lines(&buf, cli.head, cli.tail);
+        let format = cli
+            .lang
+            .as_deref()
+            .map(|l| FileFormat::Code(l.to_string()))
+            .unwrap_or_else(|| detect::detect_from_content(&buf));
+
+        if cli.info {
+            info::print_header(None, Some(&format), Some(&buf), theme, out);
+        }
+        render::brief::render(&buf, &format, theme, out);
+        return;
+    }
+
+    let multi = cli.files.len() > 1;
+
+    for path in &cli.files {
+        if path.to_str() == Some("-") {
+            let mut buf = String::new();
+            if io::stdin().read_to_string(&mut buf).is_ok() {
+                let buf = truncate_lines(&buf, cli.head, cli.tail);
+                let format = detect::detect_from_content(&buf);
+                if cli.info {
+                    info::print_header(None, Some(&format), Some(&buf), theme, out);
+                }
+                render::brief::render(&buf, &format, theme, out);
+            }
+            continue;
+        }
+
+        if !path.exists() {
+            eprintln!("vita: '{}': No such file or directory", path.display());
+            continue;
+        }
+
+        if multi {
+            out.file_separator(&path.display().to_string(), theme);
+        }
+
+        let format = cli
+            .lang
+            .as_deref()
+            .map(|l| FileFormat::Code(l.to_string()))
+            .unwrap_or_else(|| detect_format(path));
+
+        if matches!(format, FileFormat::Image) {
+            continue;
+        }
+
+        match std::fs::read_to_string(path) {
+            Ok(content) => {
+                let content = truncate_lines(&content, cli.head, cli.tail);
+                if cli.info {
+                    info::print_header(Some(path), Some(&format), Some(&content), theme, out);
+                }
+                render::brief::render(&content, &format, theme, out);
+            }
+            Err(e) => eprintln!("vita: '{}': {}", path.display(), e),
         }
     }
 }

@@ -101,7 +101,7 @@ fn column_color(index: usize) -> Color {
     Color::Rgb { r, g, b }
 }
 
-fn detect_delimiter(content: &str) -> char {
+pub(crate) fn detect_delimiter(content: &str) -> char {
     let first_lines: Vec<&str> = content.lines().take(5).collect();
     let sample = first_lines.join("\n");
 
