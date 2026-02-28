@@ -494,6 +494,73 @@ fn brief_plain(content: &str, theme: &Theme, out: &Output) {
     out.dim(&format!("  {} lines (plain text — no structure to outline)\n", line_count), theme.line_number);
 }
 
+// ─── Structural line extraction (for -b + -g combo) ───
+
+/// Returns (1-based line number, line text) for lines considered structural.
+/// For JSON/CSV/Plain (no line-mapped structure), returns empty vec.
+pub fn structural_lines<'a>(content: &'a str, format: &FileFormat) -> Vec<(usize, &'a str)> {
+    let lines: Vec<&str> = content.lines().collect();
+    match format {
+        FileFormat::Markdown => lines
+            .iter()
+            .enumerate()
+            .filter(|(_, l)| l.trim_start().starts_with('#'))
+            .map(|(i, l)| (i + 1, *l))
+            .collect(),
+        FileFormat::Code(lang) => collect_code_structural(&lines, lang),
+        _ => Vec::new(),
+    }
+}
+
+fn collect_code_structural<'a>(lines: &[&'a str], lang: &str) -> Vec<(usize, &'a str)> {
+    let normalized = lang.to_lowercase();
+    let mut result = Vec::new();
+
+    for (i, line) in lines.iter().enumerate() {
+        if is_structural_code_line(line, &normalized) {
+            result.push((i + 1, *line));
+        }
+    }
+    result
+}
+
+fn is_structural_code_line(line: &str, lang: &str) -> bool {
+    let trimmed = line.trim_start();
+
+    match lang {
+        "yaml" | "yml" => {
+            !line.is_empty() && line.len() - line.trim_start().len() <= 2 && line.contains(':')
+        }
+        "toml" => trimmed.starts_with('['),
+        "html" | "html (rails)" | "html (tcl)" => {
+            let lower = trimmed.to_lowercase();
+            lower.starts_with("<title")
+                || lower.starts_with("<h1")
+                || lower.starts_with("<h2")
+                || lower.starts_with("<h3")
+                || lower.starts_with("<h4")
+                || lower.starts_with("<h5")
+                || lower.starts_with("<h6")
+        }
+        "css" | "scss" | "sass" | "less" => is_css_selector(trimmed),
+        "batch file" | "bat" | "cmd" => trimmed.starts_with(':') && !trimmed.starts_with("::"),
+        "asm" | "nasm" | "assembly" => is_asm_structural(trimmed),
+        _ => {
+            let keywords = keywords_for(lang);
+            if matches_keyword(trimmed, keywords) {
+                return true;
+            }
+            match lang {
+                "c" | "c++" | "objective-c" | "objective-c++" => is_c_func_def(line),
+                "haskell" => has_haskell_sig(line),
+                "bash" | "sh" | "zsh" | "fish" | "shell"
+                | "bourne again shell (bash)" => is_shell_func(line),
+                _ => false,
+            }
+        }
+    }
+}
+
 // ─── Output helpers ───
 
 fn print_line(num: usize, width: usize, text: &str, theme: &Theme, out: &Output) {
