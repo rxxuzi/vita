@@ -12,6 +12,7 @@ use crossterm::style::Color;
 use pulldown_cmark::{
     Alignment, CodeBlockKind, Event, HeadingLevel, Options, Parser, Tag, TagEnd,
 };
+use unicode_width::UnicodeWidthStr;
 
 use crate::output::Output;
 use crate::theme::Theme;
@@ -194,6 +195,7 @@ impl<'a> RenderContext<'a> {
             Tag::Link { dest_url, .. } => {
                 self.in_link = true;
                 self.link_url = dest_url.to_string();
+                self.out.hyperlink_start(&self.link_url);
             }
 
             Tag::Image { dest_url, .. } => {
@@ -273,11 +275,7 @@ impl<'a> RenderContext<'a> {
             TagEnd::Strikethrough => self.in_strike = false,
 
             TagEnd::Link => {
-                if !self.link_url.is_empty() {
-                    self.out.colored(" (", self.theme.link_url);
-                    self.out.dim(&self.link_url, self.theme.link_url);
-                    self.out.colored(")", self.theme.link_url);
-                }
+                self.out.hyperlink_end();
                 self.in_link = false;
                 self.link_url.clear();
             }
@@ -346,10 +344,9 @@ impl<'a> RenderContext<'a> {
         if self.in_heading.is_some() {
             self.out.bold_colored(text, color);
         } else if self.in_bold && self.in_italic {
-            // Bold italic - use bold (most terminals don't combine well)
-            self.out.bold_colored(text, color);
+            self.out.bold_colored(text, self.theme.bold);
         } else if self.in_bold {
-            self.out.bold_colored(text, color);
+            self.out.bold_colored(text, self.theme.bold);
         } else if self.in_italic {
             self.out.italic_colored(text, color);
         } else if self.in_strike {
@@ -551,7 +548,7 @@ impl<'a> RenderContext<'a> {
         for row in &self.table_rows {
             for (i, cell) in row.iter().enumerate() {
                 if i < col_count {
-                    widths[i] = widths[i].max(cell.len());
+                    widths[i] = widths[i].max(cell.width());
                 }
             }
         }
@@ -575,7 +572,7 @@ impl<'a> RenderContext<'a> {
 
             for (c, w) in widths.iter().enumerate() {
                 let cell = row.get(c).map(|s| s.as_str()).unwrap_or("");
-                let padding = w.saturating_sub(cell.len());
+                let padding = w.saturating_sub(cell.width());
 
                 let (left, right) = match self.table_alignments.get(c) {
                     Some(Alignment::Center) => (padding / 2, padding - padding / 2),

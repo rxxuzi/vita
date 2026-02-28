@@ -76,6 +76,18 @@ impl Output {
         }
     }
 
+    pub fn hyperlink_start(&self, url: &str) {
+        if self.use_colors {
+            print!("\x1b]8;;{}\x1b\\", url);
+        }
+    }
+
+    pub fn hyperlink_end(&self) {
+        if self.use_colors {
+            print!("\x1b]8;;\x1b\\");
+        }
+    }
+
     #[allow(dead_code)]
     pub fn reset(&self) {
         if self.use_colors {
