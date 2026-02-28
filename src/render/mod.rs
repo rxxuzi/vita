@@ -9,3 +9,5 @@ pub mod json;
 pub mod markdown;
 pub mod plain;
 pub mod showall;
+pub mod toml;
+pub mod yaml;

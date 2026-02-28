@@ -14,6 +14,8 @@ pub fn render(content: &str, format: &FileFormat, theme: &Theme, out: &Output) {
         FileFormat::Markdown => brief_markdown(content, theme, out),
         FileFormat::Json => brief_json(content, theme, out),
         FileFormat::Csv => brief_csv(content, theme, out),
+        FileFormat::Toml => brief_toml(content, theme, out),
+        FileFormat::Yaml => brief_yaml(content, theme, out),
         FileFormat::Code(lang) => brief_code(content, lang, theme, out),
         FileFormat::Plain => brief_plain(content, theme, out),
         FileFormat::Image => {}
@@ -505,6 +507,18 @@ pub fn structural_lines<'a>(content: &'a str, format: &FileFormat) -> Vec<(usize
             .iter()
             .enumerate()
             .filter(|(_, l)| l.trim_start().starts_with('#'))
+            .map(|(i, l)| (i + 1, *l))
+            .collect(),
+        FileFormat::Toml => lines
+            .iter()
+            .enumerate()
+            .filter(|(_, l)| l.trim().starts_with('['))
+            .map(|(i, l)| (i + 1, *l))
+            .collect(),
+        FileFormat::Yaml => lines
+            .iter()
+            .enumerate()
+            .filter(|(_, l)| !l.is_empty() && l.len() - l.trim_start().len() <= 2 && l.contains(':'))
             .map(|(i, l)| (i + 1, *l))
             .collect(),
         FileFormat::Code(lang) => collect_code_structural(&lines, lang),

@@ -89,6 +89,8 @@ fn format_language(format: &FileFormat) -> &str {
         FileFormat::Markdown => "Markdown",
         FileFormat::Json => "JSON",
         FileFormat::Csv => "CSV",
+        FileFormat::Toml => "TOML",
+        FileFormat::Yaml => "YAML",
         FileFormat::Code(lang) => lang.as_str(),
         FileFormat::Image => "Image",
         FileFormat::Plain => "Plain Text",

@@ -176,7 +176,7 @@ fn main() {
         let format = cli
             .lang
             .as_deref()
-            .map(|l| FileFormat::Code(l.to_string()))
+            .map(|l| detect::format_from_lang(l))
             .unwrap_or_else(|| detect::detect_from_content(&buf));
 
         if cli.info {
@@ -214,7 +214,7 @@ fn main() {
         let format = cli
             .lang
             .as_deref()
-            .map(|l| FileFormat::Code(l.to_string()))
+            .map(|l| detect::format_from_lang(l))
             .unwrap_or_else(|| detect_format(path));
 
         match &format {
@@ -258,7 +258,7 @@ fn run_show_all(cli: &Cli, theme: &Theme, out: &Output) {
             let format = cli
                 .lang
                 .as_deref()
-                .map(|l| FileFormat::Code(l.to_string()))
+                .map(|l| detect::format_from_lang(l))
                 .unwrap_or_else(|| detect::detect_from_content(&buf));
             info::print_header(None, Some(&format), Some(&buf), theme, out);
         }
@@ -298,7 +298,7 @@ fn run_show_all(cli: &Cli, theme: &Theme, out: &Output) {
                     let format = cli
                         .lang
                         .as_deref()
-                        .map(|l| FileFormat::Code(l.to_string()))
+                        .map(|l| detect::format_from_lang(l))
                         .unwrap_or_else(|| detect_format(path));
                     info::print_header(Some(path), Some(&format), Some(&content), theme, out);
                 }
@@ -335,13 +335,15 @@ fn run_blame(cli: &Cli, theme: &Theme, out: &Output) {
         let format = cli
             .lang
             .as_deref()
-            .map(|l| FileFormat::Code(l.to_string()))
+            .map(|l| detect::format_from_lang(l))
             .unwrap_or_else(|| detect_format(path));
 
         let lang = match &format {
             FileFormat::Code(l) => l.as_str(),
             FileFormat::Markdown => "Markdown",
             FileFormat::Json => "JSON",
+            FileFormat::Toml => "TOML",
+            FileFormat::Yaml => "YAML",
             _ => "Plain Text",
         };
 
@@ -425,7 +427,7 @@ fn run_brief_grep(cli: &Cli, pattern: &str, theme: &Theme, out: &Output) {
         let format = cli
             .lang
             .as_deref()
-            .map(|l| FileFormat::Code(l.to_string()))
+            .map(|l| detect::format_from_lang(l))
             .unwrap_or_else(|| detect::detect_from_content(&buf));
 
         if cli.info {
@@ -463,7 +465,7 @@ fn run_brief_grep(cli: &Cli, pattern: &str, theme: &Theme, out: &Output) {
         let format = cli
             .lang
             .as_deref()
-            .map(|l| FileFormat::Code(l.to_string()))
+            .map(|l| detect::format_from_lang(l))
             .unwrap_or_else(|| detect_format(path));
 
         if matches!(format, FileFormat::Image) {
@@ -534,7 +536,7 @@ fn run_brief(cli: &Cli, theme: &Theme, out: &Output) {
         let format = cli
             .lang
             .as_deref()
-            .map(|l| FileFormat::Code(l.to_string()))
+            .map(|l| detect::format_from_lang(l))
             .unwrap_or_else(|| detect::detect_from_content(&buf));
 
         if cli.info {
@@ -572,7 +574,7 @@ fn run_brief(cli: &Cli, theme: &Theme, out: &Output) {
         let format = cli
             .lang
             .as_deref()
-            .map(|l| FileFormat::Code(l.to_string()))
+            .map(|l| detect::format_from_lang(l))
             .unwrap_or_else(|| detect_format(path));
 
         if matches!(format, FileFormat::Image) {
@@ -674,6 +676,8 @@ fn render_content(content: &str, format: &FileFormat, cli: &Cli, theme: &Theme, 
             FileFormat::Markdown => "Markdown",
             FileFormat::Json => "JSON",
             FileFormat::Csv => "Plain Text",
+            FileFormat::Toml => "TOML",
+            FileFormat::Yaml => "YAML",
             FileFormat::Code(lang) => lang.as_str(),
             FileFormat::Plain => "Plain Text",
             FileFormat::Image => return,
@@ -686,6 +690,8 @@ fn render_content(content: &str, format: &FileFormat, cli: &Cli, theme: &Theme, 
         FileFormat::Markdown => render::markdown::render(content, theme, out),
         FileFormat::Json => render::json::render(content, theme, out),
         FileFormat::Csv => render::csv::render(content, theme, out),
+        FileFormat::Toml => render::toml::render(content, theme, out),
+        FileFormat::Yaml => render::yaml::render(content, theme, out),
         FileFormat::Code(lang) => {
             render::code::render(content, lang, cli.line_numbers, theme, out)
         }

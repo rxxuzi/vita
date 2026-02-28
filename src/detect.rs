@@ -5,9 +5,23 @@ pub enum FileFormat {
     Markdown,
     Json,
     Csv,
+    Toml,
+    Yaml,
     Code(String), // language name
     Image,
     Plain,
+}
+
+/// Map a `-l` language name to the appropriate FileFormat.
+pub fn format_from_lang(lang: &str) -> FileFormat {
+    match lang.to_lowercase().as_str() {
+        "toml" => FileFormat::Toml,
+        "yaml" | "yml" => FileFormat::Yaml,
+        "json" | "jsonc" => FileFormat::Json,
+        "csv" | "tsv" => FileFormat::Csv,
+        "markdown" | "md" => FileFormat::Markdown,
+        _ => FileFormat::Code(lang.to_string()),
+    }
 }
 
 /// Map a language name to one that syntect actually recognizes.
@@ -117,7 +131,7 @@ pub fn detect_format(path: &Path) -> FileFormat {
         "css" => FileFormat::Code("CSS".into()),
         "xml" | "xsd" | "xslt" | "svg" | "rss" | "opml" => FileFormat::Code("XML".into()),
         "sql" | "ddl" | "dml" => FileFormat::Code("SQL".into()),
-        "yaml" | "yml" => FileFormat::Code("YAML".into()),
+        "yaml" | "yml" => FileFormat::Yaml,
         "json5" => FileFormat::Code("JSON".into()),
         "diff" | "patch" => FileFormat::Code("Diff".into()),
         "dot" | "gv" => FileFormat::Code("Graphviz (DOT)".into()),
@@ -135,7 +149,7 @@ pub fn detect_format(path: &Path) -> FileFormat {
         "fish" => FileFormat::Code("Fish".into()),
         "ps1" | "psm1" | "psd1" => FileFormat::Code("PowerShell".into()),
         "scss" | "sass" | "less" | "styl" => FileFormat::Code("SCSS".into()),
-        "toml" => FileFormat::Code("TOML".into()),
+        "toml" => FileFormat::Toml,
         "ini" | "cfg" | "conf" => FileFormat::Code("INI".into()),
         "dockerfile" => FileFormat::Code("Dockerfile".into()),
         "cmake" => FileFormat::Code("CMake".into()),
@@ -166,7 +180,8 @@ pub fn detect_format(path: &Path) -> FileFormat {
                 "dockerfile" => FileFormat::Code("Dockerfile".into()),
                 "cmakelists.txt" => FileFormat::Code("CMake".into()),
                 "gemfile" | "rakefile" => FileFormat::Code("Ruby".into()),
-                "cargo.toml" | "cargo.lock" => FileFormat::Code("TOML".into()),
+                "cargo.toml" => FileFormat::Toml,
+                "cargo.lock" => FileFormat::Code("TOML".into()),
                 "package.json" | "tsconfig.json" | "deno.json" => FileFormat::Json,
                 "go.sum" | "go.mod" => FileFormat::Code("Go".into()),
                 ".gitignore" | ".gitattributes" | ".editorconfig" | ".env" => FileFormat::Plain,
