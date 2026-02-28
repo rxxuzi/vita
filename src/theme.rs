@@ -48,6 +48,10 @@ pub struct Theme {
     pub blame_hash: Color,
     pub blame_author: Color,
     pub blame_date: Color,
+
+    pub hex_offset: Color,
+    pub hex_byte: Color,
+    pub hex_ascii: Color,
 }
 
 impl Theme {
@@ -125,6 +129,9 @@ impl Theme {
             blame_hash: Color::Rgb { r: 98,  g: 114, b: 164 },
             blame_author: Color::Rgb { r: 189, g: 147, b: 249 },
             blame_date: Color::Rgb { r: 98,  g: 114, b: 164 },
+            hex_offset: Color::Rgb { r: 98,  g: 114, b: 164 },
+            hex_byte: Color::Rgb { r: 248, g: 248, b: 242 },
+            hex_ascii: Color::Rgb { r: 80,  g: 250, b: 123 },
         }
     }
 
@@ -171,6 +178,9 @@ impl Theme {
             blame_hash: Color::Rgb { r: 150, g: 150, b: 150 },
             blame_author: Color::Rgb { r: 0,   g: 255, b: 255 },
             blame_date: Color::Rgb { r: 150, g: 150, b: 150 },
+            hex_offset: Color::Rgb { r: 150, g: 150, b: 150 },
+            hex_byte: Color::Rgb { r: 255, g: 255, b: 255 },
+            hex_ascii: Color::Rgb { r: 0,   g: 255, b: 128 },
         }
     }
 
@@ -217,6 +227,9 @@ impl Theme {
             blame_hash: Color::Rgb { r: 108, g: 112, b: 134 },
             blame_author: Color::Rgb { r: 203, g: 166, b: 247 },
             blame_date: Color::Rgb { r: 108, g: 112, b: 134 },
+            hex_offset: Color::Rgb { r: 108, g: 112, b: 134 },
+            hex_byte: Color::Rgb { r: 205, g: 214, b: 244 },
+            hex_ascii: Color::Rgb { r: 166, g: 227, b: 161 },
         }
     }
 
@@ -263,6 +276,9 @@ impl Theme {
             blame_hash: Color::Rgb { r: 76,  g: 86,  b: 106 },
             blame_author: Color::Rgb { r: 129, g: 161, b: 193 },
             blame_date: Color::Rgb { r: 76,  g: 86,  b: 106 },
+            hex_offset: Color::Rgb { r: 76,  g: 86,  b: 106 },
+            hex_byte: Color::Rgb { r: 216, g: 222, b: 233 },
+            hex_ascii: Color::Rgb { r: 163, g: 190, b: 140 },
         }
     }
 
@@ -309,6 +325,9 @@ impl Theme {
             blame_hash: Color::Rgb { r: 124, g: 111, b: 100 },
             blame_author: Color::Rgb { r: 250, g: 189, b: 47  },
             blame_date: Color::Rgb { r: 124, g: 111, b: 100 },
+            hex_offset: Color::Rgb { r: 124, g: 111, b: 100 },
+            hex_byte: Color::Rgb { r: 235, g: 219, b: 178 },
+            hex_ascii: Color::Rgb { r: 184, g: 187, b: 38  },
         }
     }
 
@@ -355,6 +374,9 @@ impl Theme {
             blame_hash: Color::Rgb { r: 117, g: 113, b: 94  },
             blame_author: Color::Rgb { r: 102, g: 217, b: 239 },
             blame_date: Color::Rgb { r: 117, g: 113, b: 94  },
+            hex_offset: Color::Rgb { r: 117, g: 113, b: 94  },
+            hex_byte: Color::Rgb { r: 248, g: 248, b: 242 },
+            hex_ascii: Color::Rgb { r: 166, g: 226, b: 46  },
         }
     }
 
@@ -401,6 +423,9 @@ impl Theme {
             blame_hash: Color::Rgb { r: 120, g: 90,  b: 120 },
             blame_author: Color::Rgb { r: 254, g: 146, b: 223 },
             blame_date: Color::Rgb { r: 120, g: 90,  b: 120 },
+            hex_offset: Color::Rgb { r: 120, g: 90,  b: 120 },
+            hex_byte: Color::Rgb { r: 255, g: 255, b: 255 },
+            hex_ascii: Color::Rgb { r: 153, g: 243, b: 152 },
         }
     }
 
@@ -447,6 +472,9 @@ impl Theme {
             blame_hash: Color::Rgb { r: 60,  g: 75,  b: 95  },
             blame_author: Color::Rgb { r: 131, g: 241, b: 243 },
             blame_date: Color::Rgb { r: 60,  g: 75,  b: 95  },
+            hex_offset: Color::Rgb { r: 60,  g: 75,  b: 95  },
+            hex_byte: Color::Rgb { r: 253, g: 245, b: 239 },
+            hex_ascii: Color::Rgb { r: 145, g: 229, b: 173 },
         }
     }
 }

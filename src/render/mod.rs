@@ -3,6 +3,7 @@ pub mod brief;
 pub mod code;
 pub mod csv;
 pub mod grep;
+pub mod hex;
 pub mod image;
 pub mod json;
 pub mod markdown;

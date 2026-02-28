@@ -38,6 +38,10 @@ struct Cli {
     #[arg(short = 'g', long = "grep", value_name = "PAT")]
     grep: Option<String>,
 
+    /// Hex dump: show raw bytes
+    #[arg(short = 'x', long = "hex")]
+    hex: bool,
+
     /// Show file info header
     #[arg(short = 'i', long = "info")]
     info: bool,
@@ -116,6 +120,11 @@ fn main() {
         process::exit(1);
     }
 
+    if cli.hex && (cli.brief || cli.show_all || cli.grep.is_some() || cli.blame) {
+        eprintln!("vita: --hex cannot be combined with --brief, --show-all, --grep, or --blame");
+        process::exit(1);
+    }
+
     let theme = match Theme::from_name(&cli.theme) {
         Some(t) => t,
         None => {
@@ -126,6 +135,10 @@ fn main() {
         }
     };
     let out = Output::new(!cli.plain && io::stdout().is_terminal());
+
+    if cli.hex {
+        return run_hex(&cli, &theme, &out);
+    }
 
     if cli.show_all {
         return run_show_all(&cli, &theme, &out);
@@ -337,6 +350,61 @@ fn run_blame(cli: &Cli, theme: &Theme, out: &Output) {
         }
 
         render::blame::render(path, lang, cli.head, cli.tail, theme, out);
+    }
+}
+
+fn run_hex(cli: &Cli, theme: &Theme, out: &Output) {
+    if cli.files.is_empty() {
+        if io::stdin().is_terminal() {
+            eprintln!("vita: no input. Use 'vita --help' for usage.");
+            process::exit(1);
+        }
+
+        let mut buf = Vec::new();
+        if io::stdin().read_to_end(&mut buf).is_err() {
+            eprintln!("vita: failed to read stdin");
+            process::exit(1);
+        }
+
+        if cli.info {
+            info::print_header(None, None, None, theme, out);
+        }
+        render::hex::render(&buf, cli.head, cli.tail, theme, out);
+        return;
+    }
+
+    let multi = cli.files.len() > 1;
+
+    for path in &cli.files {
+        if path.to_str() == Some("-") {
+            let mut buf = Vec::new();
+            if io::stdin().read_to_end(&mut buf).is_ok() {
+                if cli.info {
+                    info::print_header(None, None, None, theme, out);
+                }
+                render::hex::render(&buf, cli.head, cli.tail, theme, out);
+            }
+            continue;
+        }
+
+        if !path.exists() {
+            eprintln!("vita: '{}': No such file or directory", path.display());
+            continue;
+        }
+
+        if multi {
+            out.file_separator(&path.display().to_string(), theme);
+        }
+
+        match std::fs::read(path) {
+            Ok(data) => {
+                if cli.info {
+                    info::print_header(Some(path), None, None, theme, out);
+                }
+                render::hex::render(&data, cli.head, cli.tail, theme, out);
+            }
+            Err(e) => eprintln!("vita: '{}': {}", path.display(), e),
+        }
     }
 }
 
